@@ -1,0 +1,37 @@
+
+-- TEACHER(교사) 테이블 생성
+CREATE TABLE 교사 (
+    T_NUM INT DEFAULT 순서.NEXTVAL PRIMARY KEY,   -- 교사번호
+    T_NAME VARCHAR2(50) NOT NULL,                -- 교사이름
+    MAJOR VARCHAR2(100),                         -- 담당과목
+    CAREER INT,                                  -- 경력
+    TEL VARCHAR2(50) UNIQUE                      -- 전화번호
+);
+
+-- 시퀀스 생성
+CREATE SEQUENCE 순서 START WITH 1 INCREMENT BY 1;
+
+-- 프로시저 호출 :: 교사 테이블 데이터 삽입
+EXEC ADD_TEACHER(순서.NEXTVAL, '이유나', 'java', 5, '010-0001-1111');
+EXEC ADD_TEACHER(순서.NEXTVAL, '이동준', 'c++', 8, '010-0002-2222');
+EXEC ADD_TEACHER(순서.NEXTVAL, '이서윤', 'SQL', 3, '010-0003-3333');
+EXEC ADD_TEACHER(순서.NEXTVAL, '박지호', 'c', 2, '010-0004-4444');
+EXEC ADD_TEACHER(순서.NEXTVAL, '김민재', 'Python', 6, '010-0005-5555');
+
+SELECT * FROM 교사;
+
+
+-- 프로시저 생성 :: 교사 데이터 입력
+/
+CREATE OR REPLACE PROCEDURE ADD_TEACHER
+(
+    IN_번호 IN INT,
+    IN_이름 IN VARCHAR2,
+    IN_과목 IN VARCHAR2,
+    IN_경력 IN INT,
+    IN_전화 IN VARCHAR2
+)
+IS BEGIN
+    INSERT INTO 교사 VALUES(IN_번호, IN_이름, IN_과목, IN_경력, IN_전화);
+END ADD_TEACHER;
+/
