@@ -1,0 +1,21 @@
+create table KB학교(
+    지역 varchar2(50) primary key,
+    과목 varchar2(50)
+);
+create table 교사(
+    교사번호 varchar2(10) primary key,
+    이름 varchar2(50),
+    담당과목 varchar2(100),
+    경력 int,
+    전화번호 varchar2(50)
+);
+create table 학생(
+    -- 학번 순차적 숫자
+    이름 varchar2(50),
+    생년월일 varchar2(100),--fk 등록해주기
+    수강과목 varchar2(100), --나중에 담당교사랑 join
+    학년 int,
+    전화번호 varchar2(50)
+);
+
+
