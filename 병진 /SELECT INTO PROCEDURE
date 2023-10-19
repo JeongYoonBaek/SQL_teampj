@@ -1,0 +1,14 @@
+CREATE OR REPLACE PROCEDURE myprocedure (
+    search_value IN VARCHAR2
+) AS
+    v_column1 VARCHAR2(50); 
+BEGIN
+    SELECT
+        major
+    INTO v_column1
+    FROM
+        students
+    WHERE
+        major = search_value;
+END myprocedure;
+/
