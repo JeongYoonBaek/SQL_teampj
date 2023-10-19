@@ -1,0 +1,83 @@
+set serveroutput on;
+
+-- 시퀀스 생성
+CREATE SEQUENCE tnum START WITH 1 INCREMENT BY 1;
+
+CREATE SEQUENCE mun START WITH 1 INCREMENT BY 1;
+-- 학교 테이블 
+CREATE TABLE kbschool (
+    area VARCHAR2(50) PRIMARY KEY
+);
+
+CREATE TABLE teachers (
+    num  INT DEFAULT tnum.NEXTVAL PRIMARY KEY,
+    name   VARCHAR2(50),
+    major  VARCHAR2(50),
+    career INT,
+    hp     VARCHAR2(50)
+);
+
+create table students(
+    num int default mun.nextval primary key,
+    name varchar2(50),
+    major varchar2(50),
+    class int,
+    year int,
+    hp varchar2(50),
+    area varchar2(50)
+    );
+--
+------------------ 프로시져 ------------------------
+/-- 학생 추가
+create or replace procedure add_students(
+    in_num in int,
+    in_name varchar2,
+    in_major varchar2,
+    in_class int,
+    in_year int,
+    in_hp varchar2,
+    in_area varchar2
+)is begin
+insert into students values(in_num,in_name,in_major,in_class,in_year,in_hp,in_area);
+end add_students;
+/-- 교사 추가
+create or replace procedure add_teachers
+(
+    in_num  in INT,
+    in_name   VARCHAR2,
+    in_major  VARCHAR2,
+    in_career INT,
+    in_hp     VARCHAR2
+)is begin
+insert into teachers values(in_num,in_name,in_major,in_career,in_hp);
+end add_teachers;
+/-- 학생 삭제
+create or replace procedure adcancel(
+    in_num in int
+)is begin delete from students where num=in_num;
+end adcancel;
+/-- 학생 전공 수정
+create or replace procedure up_student(
+    in_num in int,
+    in_major in varchar2
+)is begin update students set major=in_major where student.num=in_num;
+end up_student;
+/
+---------------------------------- 트리거 --------------------------
+-- 학생 관련 데이터 제거
+CREATE OR REPLACE TRIGGER cutting BEFORE
+    DELETE ON students
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 신청이 반려되었습니다. ***');
+    dbms_output.put_line('*** 사유 : 위수지 외 지역, 신청 취소 등 ***');
+END;
+/
+-- 학생 관련 수정
+create or replace trigger updating before
+    update on students
+    for each row
+    declare begin
+    dbms_output.put_line('*** 정보가 갱신되었습니다. ***');
+    end;
+/
