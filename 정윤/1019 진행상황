@@ -1,0 +1,197 @@
+set serveroutput on;
+
+-- 시퀀스 생성
+CREATE SEQUENCE tnum START WITH 1 INCREMENT BY 1;
+
+CREATE SEQUENCE mun START WITH 1 INCREMENT BY 1;
+-- 학교 테이블 
+CREATE TABLE kbschool (
+    area VARCHAR2(50) PRIMARY KEY
+);
+
+DROP TABLE kbschool;
+
+CREATE TABLE teachers (
+    num    INT DEFAULT tnum.NEXTVAL PRIMARY KEY,      -- 교번
+    name   VARCHAR2(50),            -- 이름
+    major  VARCHAR2(50),            -- 담당과목
+    career INT,                     -- 경력
+    hp     VARCHAR2(50)             -- 휴대폰 
+);
+
+CREATE TABLE students (
+    num   INT DEFAULT mun.NEXTVAL PRIMARY KEY,   -- 학번
+    name  VARCHAR2(50),                   -- 이름 
+    major VARCHAR2(50),                   -- 전공 
+    class INT,                            -- 학년 
+    year  INT,                            -- 생년월일
+    hp    VARCHAR2(50),                   -- 휴대폰
+    area  VARCHAR2(50)                    -- 지역 
+);
+
+SELECT
+    *
+FROM
+    students;
+
+EXEC ADD_students(mun.nextval,'백정윤', 'C', 1, 970506, '010-6489-7505','daegu');
+EXEC ADD_students(mun.nextval,'권병진', 'C++', 2, 960315, '010-1111-1234','daegu');
+EXEC ADD_students(mun.nextval,'신예원', 'JAVA', 3, 930101, '010-0000-5555','daegu');
+EXEC ADD_students(mun.nextval,'홍주환', 'SQL', 2, 940101, '010-6489-4444','daegu');
+EXEC ADD_students(mun.nextval,'임꺽정', 'PYTHON', 1, 920517, '010-6489-3333','daegu');
+EXEC ADD_students(mun.nextval,'홍길동', 'C', 3 ,  911122, '010-6289-2222','daegu');
+EXEC ADD_students(mun.nextval,'이순신', 'JAVA', 1, 900717, '010-6489-1111','daegu');
+EXEC ADD_students(mun.nextval,'강감찬', 'JAVA', 1, 900717, '010-6489-1111','daegu');
+
+EXEC add_teachers(tnum.NEXTVAL, '이유나', 'c', 5 , '010-0001-1111');
+EXEC add_teachers(tnum.NEXTVAL, '이동준', 'c++', 8, '010-0002-2222');
+EXEC add_teachers(tnum.NEXTVAL, '이서윤', 'java', 3, '010-0003-3333');
+EXEC add_teachers(tnum.NEXTVAL, '박지호', 'sql', 2,'010-0004-4444');
+EXEC add_teachers(tnum.NEXTVAL, '김민재', 'python', 6, '010-0005-5555');
+
+
+
+--
+------------------ 프로시져 ------------------------
+/
+-- 학생 추가
+CREATE OR REPLACE PROCEDURE add_students (
+    in_num   IN INT,
+    in_name  VARCHAR2,
+    in_major VARCHAR2,
+    in_class INT,
+    in_year  INT,
+    in_hp    VARCHAR2,
+    in_area  VARCHAR2
+) IS
+BEGIN
+    INSERT INTO students VALUES (
+        in_num,
+        in_name,
+        in_major,
+        in_class,
+        in_year,
+        in_hp,
+        in_area
+    );
+
+END add_students;
+/
+/-- 교사 추가
+CREATE OR REPLACE PROCEDURE add_teachers (
+    in_num    IN INT,
+    in_name   VARCHAR2,
+    in_major  VARCHAR2,
+    in_career INT,
+    in_hp     VARCHAR2
+) IS
+BEGIN
+    INSERT INTO teachers VALUES (
+        in_num,
+        in_name,
+        in_major,
+        in_career,
+        in_hp
+    );
+
+END add_teachers;
+/
+/-- 학생 삭제
+CREATE OR REPLACE PROCEDURE adcancel (
+    in_num IN INT
+) IS
+BEGIN
+    DELETE FROM students
+    WHERE
+        num = in_num;
+
+END adcancel;
+/
+/-- 학생 전공 수정
+CREATE OR REPLACE PROCEDURE up_student (
+    in_num   IN INT,
+    in_major IN VARCHAR2
+) IS
+BEGIN
+    UPDATE students
+    SET
+        major = in_major
+    WHERE
+        students.num = in_num;
+
+END up_student;
+/
+/---과목 별 수강 인원 조회
+    
+---------------------------------- 트리거 --------------------------
+-- 학생 관련 데이터 제거
+CREATE OR REPLACE TRIGGER cutting BEFORE
+    DELETE ON students
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 신청이 반려되었습니다. ***');
+    dbms_output.put_line('*** 사유 : 위수지 외 지역, 신청 취소 등 ***');
+END;
+/
+-- 학생 관련 수정
+CREATE OR REPLACE TRIGGER updating BEFORE
+    UPDATE ON students
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 정보가 갱신되었습니다. ***');
+END;
+/
+/
+--학생 관련 추가
+create or replace TRIGGER TEACHERS_INSERT 
+BEFORE INSERT ON TEACHERS    
+FOR EACH ROW 
+DECLARE BEGIN 
+  DBMS_OUTPUT.PUT_LINE('*** 입학 신청 되었습니다. ***');
+END;
+/
+/
+--교사 관련 추가
+create or replace TRIGGER TEACHERS_INSERT 
+BEFORE INSERT ON TEACHERS    
+FOR EACH ROW 
+DECLARE BEGIN 
+  DBMS_OUTPUT.PUT_LINE('*** 어서오세요!!! ***');
+END;
+/
+-- 교사 관련 데이터 제거
+CREATE OR REPLACE TRIGGER T_cutting BEFORE
+    DELETE ON TEACHERS
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 공석이 없습니다. ***');
+END;
+/
+-- 교사 관련 수정
+CREATE OR REPLACE TRIGGER t_updating BEFORE
+    UPDATE ON TEACHERS
+    FOR EACH ROW
+DECLARE BEGIN
+dbms_output.put_line('*** 정보가 갱신되었습니다. ***');
+
+end;
+/
+#include <stdio.h>
+---------------- test ------------------
+SELECT
+    *
+FROM
+    students;
+
+SELECT
+    *
+FROM
+    teachers;
+
+
+
+CREATE VIEW v_majors AS
+
+SELECT students.major 과목명, count(*) 수강인원
+FROM students group by major;
+
