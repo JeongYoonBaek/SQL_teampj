@@ -1,0 +1,154 @@
+
+---------------------------------- 테이블 ------------------------------------
+create table kmajor(     --학과
+    num number not null primary key,  --학과번호
+    name varchar2(50) not null        --학과명
+);
+create table prop(      --교수
+    num number not null primary key,    --교수번호
+    name varchar2(50) not null,         --교수명 
+    majornum number not null,           --전공번호
+    foreign key (majornum) references kmajor(num)
+);
+create table pupil(     --학생
+    num number not null primary key,    --학생번호
+    name varchar2(50) not null,         --학생명
+    addr varchar2(100) not null,        --주소
+    classes number,                     --학년
+    ent date,                           --입력 일자
+    majornum number not null,           --학과번호
+    foreign key (majornum) references kmajor(num)
+);
+create table mclass(    --과목
+    num number not null primary key,    --과목번호
+    name varchar2(50) not null,         --과목명
+    score number,                       --학점
+    mpnum number not null,              --담당교수번호
+    foreign key(mpnum) references prop(num)
+);
+create table classinfo(     --수강 내역
+    stunum number not null, --학생번호
+    clsnum number not null, --과목번호
+    score number(4,1),      --점수
+    ranks varchar2(10),     --학점
+    constraint classinfo_pk primary key(stunum,clsnum),
+    foreign key(stunum) references pupil(num),
+    foreign key(clsnum) references mclass(num)
+);
+
+------------------------ 프로시져 -----------------------
+/ -- 학과등록
+CREATE OR REPLACE PROCEDURE inmajor (
+    in_num in number,
+    in_name varchar2
+) IS
+BEGIN
+    INSERT INTO kmajor VALUES (
+        in_num,
+        in_name
+    );
+END inmajor;
+/
+/   --교수등록
+CREATE OR REPLACE PROCEDURE inprop (
+    in_num in number,
+    in_name varchar2,
+    in_majornum number
+) IS
+BEGIN
+    INSERT INTO prop VALUES (
+        in_num,
+        in_name,
+        in_majornum
+    );
+END inprop;
+/
+/  --학생등록
+create or replace procedure inpupil(
+    in_num in number,
+    in_name varchar2,
+    in_addr varchar2,
+    in_classes number,
+    in_ent date,
+    in_majornum number
+)is begin
+insert into pupil values(
+    in_num,
+    in_name,
+    in_addr,
+    in_classes,
+    in_ent,
+    in_majornum
+);
+end inpupil;
+/
+/ -- 과목등록
+create or replace procedure inclass(
+    in_num in number,
+    in_name varchar2,
+    in_score number,
+    in_mpnum number
+)is begin
+insert into mclass values(
+    in_num,
+    in_name,
+    in_score,
+    in_mpnum
+);
+end inclass;
+/
+/       --수강내역
+create or replace procedure inclassinfo(
+    in_stunum in number,
+    in_clsnum number,
+    in_score number,
+    in_ranks varchar2
+)is begin
+insert into classinfo values(
+    in_stunum,
+    in_clsnum,
+    in_score,
+    in_ranks
+);
+end inclassinfo;
+/
+--------------------------------- TEST --------------------
+drop table kmajor;
+drop table prop;
+drop table pupil;
+drop table classinfo;
+drop table mclass;
+
+drop sequence sq;
+create sequence sq;
+exec inmajor(sq.nextval, 'Java');
+exec inmajor(sq.nextval, 'C');
+exec inmajor(sq.nextval, 'C++');
+exec inmajor(sq.nextval, 'python');
+exec inmajor(sq.nextval, 'sql');
+exec inmajor(sq.nextval, 'script');
+select * from kmajor;
+
+exec inprop(sq.nextval, 'Lee', 1);
+exec inprop(sq.nextval, 'kim', 1);
+exec inprop(sq.nextval, 'im', 2);
+exec inprop(sq.nextval, 'jung', 2);
+exec inprop(sq.nextval, 'Lee', 3);
+exec inprop(sq.nextval, 'Lee', 4);
+exec inprop(sq.nextval, 'Lee', 5);
+exec inprop(sq.nextval, 'Lee', 6);
+select * from prop;
+
+exec inpupil(sq.nextval, 'kim', 'asdf asdfas',1,'2023-10-20',2);
+exec inpupil(sq.nextval, 'im', 'asdf asdfas',2,'2023-10-20',1);
+exec inpupil(sq.nextval, 'moon', 'asdf asdfas',3,'2023-10-20',3);
+select * from pupil;
+
+exec inclass(sq.nextval, 'SQL활용',3,5);
+exec inclass(sq.nextval, 'java활용',3,1);
+exec inclass(sq.nextval, 'C활용',2,2);
+select * from mclass;
+
+exec inclassinfo(1,2,80,'B');
+
+select * from classinfo;
