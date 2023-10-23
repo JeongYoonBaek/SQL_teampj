@@ -341,3 +341,70 @@ end;
 / 
 
 --------------------------------- TEST zone --------------------
+CREATE SEQUENCE sq;
+
+exec inmajor(sq.nextval, 'Java');
+exec inmajor(sq.nextval, 'C');
+exec inmajor(sq.nextval, 'C++');
+exec inmajor(sq.nextval, 'python');
+exec inmajor(sq.nextval, 'sql');
+exec inmajor(sq.nextval, 'script');
+
+SELECT
+    *
+FROM
+    kmajor;
+
+exec inprop(sq.nextval, 'Lee', 1);
+exec inprop(sq.nextval, 'kim', 1);
+exec inprop(sq.nextval, 'im', 2);
+exec inprop(sq.nextval, 'jung', 2);
+exec inprop(sq.nextval, 'Lee', 3);
+exec inprop(sq.nextval, 'Lee', 4);
+exec inprop(sq.nextval, 'Lee', 5);
+exec inprop(sq.nextval, 'Lee', 6);
+
+SELECT
+    *
+FROM
+    prop;
+
+exec inpupil(sq.nextval, 'kim', 'asdf asdfas',1,'2023-10-20',2);
+exec inpupil(sq.nextval, 'im', 'asdf asdfas',2,'2023-10-20',1);
+exec inpupil(sq.nextval, 'moon', 'asdf asdfas',3,'2023-10-20',3);
+
+SELECT
+    *
+FROM
+    pupil;
+
+exec inclass(sq.nextval, 'SQL활용',3,5);
+exec inclass(sq.nextval, 'java활용',3,1);
+exec inclass(sq.nextval, 'C활용',2,2);
+
+SELECT
+    *
+FROM
+    mclass;
+
+exec inclassinfo(1,2,80,'B');
+
+SELECT
+    *
+FROM
+    classinfo;
+
+select name as "이름", addr as "주소" from pupil;
+
+select * from pupil where name like '이%';
+
+select * from pupil where by name asc;
+
+select clsnum, avg(score) as "과목평균점수" from classinfo group by clsnum order by clsnum;
+select * from pupil where group by addr like '%대구%' having name like '이%';
+
+create or replace view 학생 as
+(
+    select num, name,classes,ent 
+    from pupil
+);
