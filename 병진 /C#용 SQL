@@ -37,6 +37,7 @@ create table classinfo(     --수강 내역
 );
 
 ------------------------ 프로시져 -----------------------
+---------------------------등록 ---------------------------
 / -- 학과등록
 CREATE OR REPLACE PROCEDURE inmajor (
     in_num in number,
@@ -112,6 +113,195 @@ insert into classinfo values(
 );
 end inclassinfo;
 /
+----------------------------------삭제----------------------------
+-- 수강
+/
+create or replace procedure delclassinfo(
+    in_stunum in number
+)is begin
+delete from classinfo where stunum = in_stunum;
+end delclassinfo;
+/
+
+/-- 과목
+create or replace procedure delclass(
+    in_num in number
+)is begin
+delete from mclass where num = in_num;
+end delclass;
+/
+
+/-- 학생
+create or replace procedure delpupil(
+    in_num in number
+)is begin
+delete from pupil where num = in_num;
+end delpupil;
+/
+
+/--교수
+create or replace procedure delprop(
+    in_num in number
+)is begin
+delete from prop where num = in_num;
+end delprop;
+/
+
+/--학과
+create or replace procedure delmajor(
+    in_num in number
+)is begin
+delete from kmajor where num = in_num;
+end delmajor;
+/
+----------------------------수정 ------------------------------------
+/
+create or replace procedure up_classinfo( -- 수강내역 점수,학점 변경
+    in_stunum in number,
+    in_score number,
+    in_ranks varchar2
+)is begin
+update classinfo set
+    score = in_score,
+    ranks = in_ranks
+where stunum = in_stunum;
+end up_classinfo;
+/
+/
+create or replace procedure up_class( -- 과목 수강학점 변경
+    in_num in number,
+    in_score number
+)is begin
+update mclass set
+    score = in_score
+where num = in_num;
+end up_class;
+/
+------------------------------- 트리거 ----------------------------
+
+-----------------------등록 ----------------------
+CREATE OR REPLACE TRIGGER in_major BEFORE  --학과 등록
+    insert ON kmajor
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 학과 등록 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_prop BEFORE  --교수 등록
+    insert ON prop
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 교수 등록 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_pupil BEFORE  --학생 등록
+    insert ON pupil
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 학생 등록 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_class BEFORE  --과목 등록
+    insert ON mclass
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 과목 등록 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_classinfo BEFORE  --수강 내역 등록
+    insert ON classinfo
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 수강내역 등록 완료. ***');
+END;
+/
+-------------------------------------삭제 -------------------------
+/
+CREATE OR REPLACE TRIGGER in_major BEFORE  --학과 
+    delete ON kmajor
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 학과 삭제 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_prop BEFORE  --교수 
+    delete ON prop
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 교수 삭제 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_pupil BEFORE  --학생 
+    delete ON pupil
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 학생 삭제 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_class BEFORE  --과목 
+    delete ON mclass
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 과목 삭제 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_classinfo BEFORE  --수강 내역 
+    delete ON classinfo
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 수강내역 삭제 완료. ***');
+END;
+/ 
+-------------------------------수정----------------------
+/
+CREATE OR REPLACE TRIGGER in_major BEFORE  --학과 
+    update ON kmajor
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 학과 수정 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_prop BEFORE  --교수 
+    update ON prop
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 교수 수정 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_pupil BEFORE  --학생 
+    update ON pupil
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 학생 수정 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_class BEFORE  --과목 
+    update ON mclass
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 과목 수정 완료. ***');
+END;
+/
+/
+CREATE OR REPLACE TRIGGER in_classinfo BEFORE  --수강 내역 
+    update ON classinfo
+    FOR EACH ROW
+DECLARE BEGIN
+    dbms_output.put_line('*** 수강내역 수정 완료. ***');
+END;
+/ 
+
 --------------------------------- TEST --------------------
 drop table kmajor;
 drop table prop;
